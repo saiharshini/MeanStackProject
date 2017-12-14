@@ -1,0 +1,58 @@
+<html>
+        
+        <head>
+            <title>Cafeteria App</title>
+        </head>
+        
+        <body>
+                <!-- <div class="well" align="center"><h2><span class="glyphicon glyphicon-cutlery"></span>  Vendor1 My Order</h2></div>
+                <div align="right">
+                        <a href="index.html" class="btn btn-info btn-lg">
+                                <span class="glyphicon glyphicon-list-alt"></span> Menu
+                              </a><a href="feedback.html" class="btn btn-info btn-lg">
+                     <span class="glyphicon glyphicon-comment"></span> Feedback
+                   </a>
+                </div> -->
+           
+            
+           
+            <div>
+                    <h2>{{successMessage}}</h2>
+                <div class="container" >
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+        
+                        <tbody ng-repeat="o in orders">
+                            <tr ng-repeat="orderobj in o.orders">
+                                <td>{{orderobj.name}}</td>
+                                <td>{{orderobj.price}}</td>
+                                <td>{{orderobj.total}}</td>
+                                <!-- <td><button type="button" ng-click="order(vendor)">add</button></td>                                                          -->
+                            </tr>
+                    </table>
+        
+                    <button type="button" ng-click="feedback()">Place Order</button>
+                    </tbody>
+                    <div><h3>The Amount for the order: {{totalAmount}}</h3></div>
+                </div>
+               
+            </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        
+            <!-- jQuery library -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+            <!-- Latest compiled JavaScript -->
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+            
+        </body>
+        
+        </html>

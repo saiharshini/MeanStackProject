@@ -1,0 +1,169 @@
+<html>
+
+<head>
+    <title>Cafeteria App</title>
+</head>
+
+<body ng-app="VendorApp">
+
+
+
+
+    <div class="well" align="center">
+        <h2><span class="glyphicon glyphicon-cutlery"></span> Vendor1 Menu List</h2>
+    </div>
+    <div align="right">
+
+        <a href="/myorders" class="btn btn-info btn-lg">
+                        <span class="glyphicon glyphicon-shopping-cart"></span> My Order
+                      </a>
+    </div>
+
+    <div>
+        <p>Our single page</p>
+        <ng-view></ng-view>
+
+    </div>
+    <!-- <form action="/insertPlacedorder" method="POST"> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        var app = angular.module('VendorApp', ['ngRoute']);
+        app.config(function ($routeProvider) {
+            $routeProvider.when('/', {
+                templateUrl: 'partials/menu.html',
+                controller: 'myCtrl'
+            })
+            .when('/items/:id', {
+                templateUrl: 'partials/item.html',
+                controller:'itemctrl'
+            }).when('/myorders',{
+                templateUrl:'partials/myorders.html',
+                controller:'VendorCtrl'
+            }).when('/feedback',{
+                templateUrl:'partials/feedback.html',
+                controller: 'feedCtrl'
+            })
+        })
+        app.controller('myCtrl', function ($scope, $http) {
+            console.log('Init...')
+            $http({
+                url: 'menus',
+                method: 'GET'
+            }).then(res => {
+                console.log('kindly....', res.data);
+                $scope.menus = res.data;
+
+
+            })
+        })
+        app.controller('itemctrl', function($scope, $http, $routeParams){
+            console.log($routeParams)
+            console.log('begin item')
+            var myUrl = '/items/' + $routeParams.id
+            $http({
+                url:myUrl   ,
+                method:'GET'
+            }).then(res=>{
+                console.log('getting data..', res.data)
+                console.log(res.data.items)
+                $scope.items=res.data.items;
+            })
+            $scope.order = function () {
+                console.log($scope.items)
+                var orders = [];
+                var total = 0;
+                var subtotal = 0;
+                angular.forEach($scope.items, function (item) {
+                    console.log(item);
+                    if (item.quantity > 0) {
+                        subtotal = (item.quantity * item.price);
+                        total += subtotal
+                        var order = { name: item.name, quantity: item.quantity, price: item.price, associateName: 'Hard-coded', total: subtotal }
+                        orders.push(order);
+                    }
+                })
+
+                $scope.totalAmount = total;
+                console.log(total);
+                console.log(orders);
+
+                if (total > 0) {
+                    $http({
+                        url: '/addorders',
+                        method: 'POST',
+                        data: { orders: orders }
+                    }).then(res => {
+                        console.log(res.data);
+                        $scope.successMessage = "Your order has been placed successfully!!"
+                        // $scope.vendors = res.data;
+                        // $scope.cart=[];
+
+                    })
+                }
+                else {
+                    $scope.errorMessage = "No Items Ordered!!"
+                }
+            }
+
+            // $http({
+            //     url: 'menu',
+            //     method: 'GET'
+            // }).then(res => {
+            //     console.log(res.data);
+            //     $scope.menu = res.data;
+            //     $scope.cart = [];
+
+            // })
+      
+        })
+    
+        app.controller('feedCtrl', function ($scope, $http) {        
+                    $scope.feedback = function () {                      
+        
+                        var feedbacks = [];
+                         var i = 0;
+                         var totalprice=0;
+                         var subtotal=0;
+                        angular.forEach($scope.orders, function (orderobj) {
+                            console.log('pppppppppppppppppppppppppppp',orderobj.orders);
+                            console.log('dfgdgg',orderobj.orders[0].total)                            
+                            
+                             for(i=0;i<=orderobj.orders.length;i++){
+                                 console.log('vggvg',orderobj.orders[i].total)
+                                 var p= (orderobj.orders[i].total);
+                                 totalprice = totalprice + p
+                                 $scope.totalAmount= totalprice;
+                                console.log(totalprice);
+                                var feedback = { name: orderobj.orders[i].name, feedback: orderobj.orders[i].feedback, price: orderobj.orders[i].price,total: orderobj.orders[i].total }
+                                feedbacks.push(feedback);
+                                $scope.successMessage = "Thanks for placing the order!!"
+                             }
+                        })
+        
+                         $scope.totalAmount = totalprice;
+                         console.log(totalprice);
+                         console.log(feedbacks);                  
+                    }
+
+        
+                    $http({
+                        url: 'myorders',
+                        method: 'GET'
+                    }).then(res => {
+                        console.log('kindly....',res.data);
+                        $scope.orders = res.data;
+                      
+        
+                    })
+                })
+            
+       
+    </script>
+</body>
+
+</html>
